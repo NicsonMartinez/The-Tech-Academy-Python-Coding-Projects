@@ -39,8 +39,8 @@ and paste them within the destination directory.
 
 ------------------------------------------------------------------------------------------------------
 
-Please use  the 'test-directory' folder (which has two .txt files) and paste in the 'test-directory-2'
-folder inside of the current project folder directory. 
+Please use  the 'test-directory' folder (which has two .txt files) and paste in the any
+folder you'd like.
 
 **Try to find the bugs on this program. You Might just find some!
 
