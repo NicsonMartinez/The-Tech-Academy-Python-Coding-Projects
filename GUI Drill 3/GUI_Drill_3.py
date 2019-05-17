@@ -27,7 +27,7 @@ class TheMainWindow(Frame):
         self.master = master
         self.master.resizable(width=False, height=False)
         self.master.geometry('{}x{}'.format(605, 260))  # (width,height)
-        self.master.title('Cut and Paste all .txt Files')
+        self.master.title('Cut and Paste all .txt Files fround from one folder to another!!!')
         self.master.config(bg='lightgray')
 
 # -------------------------------------GUI Row 0-------------------------------------------
