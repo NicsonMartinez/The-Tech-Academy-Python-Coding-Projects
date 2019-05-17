@@ -42,6 +42,8 @@ and paste them within the destination directory.
 Please use  the 'test-directory' folder (which has two .txt files) and paste in the 'test-directory-2'
 folder inside of the current project folder directory. 
 
+**Try to find the bugs on this program. You Might just find some!
+
 Nicson Martinez
-5/15/19
+5/17/19
 
