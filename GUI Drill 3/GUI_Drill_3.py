@@ -7,6 +7,7 @@
 # Nicson Martinez
 # 5/17/19
 
+import subprocess
 import sys
 import os
 import sqlite3
@@ -26,7 +27,7 @@ class TheMainWindow(Frame):
         self.master = master
         self.master.resizable(width=False, height=False)
         self.master.geometry('{}x{}'.format(605, 260))  # (width,height)
-        self.master.title('Check Files')
+        self.master.title('Cut and Paste all .txt Files')
         self.master.config(bg='lightgray')
 
 # -------------------------------------GUI Row 0-------------------------------------------
@@ -231,6 +232,12 @@ class TheMainWindow(Frame):
             self.btnReset.grid(row=4, column=1, padx=(72,0))
 
             self.btnGo.config(state=DISABLED) # Disables the button to decrease likelyhood of the program malfunctioning
+            self.btnBrowse1.config(state=DISABLED)
+            self.btnBrowse2.config(state=DISABLED)
+
+            path=os.path.normpath(destination)
+            print(path)
+            subprocess.Popen(f'explorer {os.path.realpath(path)}')
 
         except:
 
@@ -247,6 +254,8 @@ class TheMainWindow(Frame):
             self.btnReset.grid(row=4, column=1, padx=(72,0))
 
             self.btnGo.config(state=DISABLED)
+            self.btnBrowse1.config(state=DISABLED)
+            self.btnBrowse2.config(state=DISABLED)
 
     def close(self):
         self.master.destroy()
@@ -254,6 +263,7 @@ class TheMainWindow(Frame):
     def reset(self):
         print("\n\nThe 'Reset' button was pressed.")
 
+        self.btnBrowse1.config(state=NORMAL)
         self.txtBox1.delete(0, END)
         self.btnBrowse2.grid_remove()
         self.txtBox2.grid_remove()
