@@ -7,6 +7,7 @@
 # Nicson Martinez
 # 5/15/19
 
+import sys
 import os
 import sqlite3
 import shutil
@@ -16,7 +17,7 @@ from tkinter import Tk
 from datetime import datetime
 
 
-sourceDirectory = []
+txtFilesAbsolutePathList = []
 class TheMainWindow(Frame):
     def __init__(self, master):
         Frame.__init__(self)
@@ -30,7 +31,7 @@ class TheMainWindow(Frame):
 # -------------------------------------GUI Row 0-------------------------------------------
 
         self.btnBrowse1 = Button(
-            self.master, text='Browse Source...', width=16, height=2, command=self.browseDirectory)
+            self.master, text='Browse Source...', width=16, height=2, command=self.browseSource)
         self.btnBrowse1.grid(row=0, column=0, padx=(20, 0), pady=(50, 0))
 
         self.txtBox1 = Entry(self.master, font=(
@@ -56,7 +57,7 @@ class TheMainWindow(Frame):
 # -------------------------------------GUI Row 3-------------------------------------------
 
         self.btnBrowse2 = Button(
-            self.master, text='Browse Destination...', width=16, height=2, command=self.cutPaste)
+            self.master, text='Browse Destination...', width=16, height=2, command=self.browseDestination)
         self.btnBrowse2.grid(row=3, column=0, padx=(20, 0), pady=(0, 0))
 
         self.txtBox2 = Entry(self.master, font=(
@@ -72,9 +73,12 @@ class TheMainWindow(Frame):
 # ---------------------------------[ Button Functions ]--------------------------------------
 
   
-    def browseDirectory(self):
+    def browseSource(self):
+
+        self.txtBox1.config(state=NORMAL)
+
         # This is done in case the user decided to type something in the textbox before
-        # pressing the [Browse...] button.
+        # pressing the [Browse Source...] button.
         test = self.txtBox1.get()
         print("Below is the text the user wrote on textbox 1 before clicking on the 'Browse Source' button: \n'{}'\n".format(test))
 
@@ -91,9 +95,16 @@ class TheMainWindow(Frame):
         if (self.txtBox1.get() == '') or (self.txtBox1.get() == None):
             self.lblMsg1.config(
                 bg='lightblue', text='Please select a source directory to proceed...')
+            self.lblMsg2.config(
+                bg='lightgray', text='')
         else:
+
+            self.txtBox1.config(state=DISABLED)
+
             self.lblMsg1.config(
                 bg='lightgreen', text='We are now locating the .txt files in the directory selected!')
+            self.lblMsg2.config(
+                bg='lightgray', text='')
 
         fPath = self.txtBox1.get()
         print('This is the source directory that was selected: \n{}\n'.format(fPath))
@@ -121,9 +132,10 @@ class TheMainWindow(Frame):
             print("The text files detected are: ")
             for file in directoryList:
                 if file.endswith('.txt'):
-                    sourceDirectory.append(file)
                     # Concatinates the path directory with a txt file found through each iteration.
                     abPath = os.path.join(fPath, file)
+                    txtFilesAbsolutePathList.append(abPath)
+
                     # Gets last modified time.
                     fModTime = os.path.getmtime(abPath)
                     formattedTime = datetime.fromtimestamp(fModTime).strftime(
@@ -136,13 +148,20 @@ class TheMainWindow(Frame):
             conn.commit()
         conn.close()
 
-    def cutPaste(self):
+        if not txtFilesAbsolutePathList:
+            
+
+
+    def browseDestination(self):
+
+        self.txtBox2.config(state=NORMAL)
+
         if (self.txtBox1.get() == '') or (self.txtBox1.get() == None):
             self.lblMsg1.config(
                 bg='lightblue', text="You must first click the 'Browse Source' button to select the source...")
         else:
             # This is done in case the user decided to type something in the textbox before
-            # pressing the [Browse...] button.
+            # pressing the [Browse Destination...] button.
             test = self.txtBox2.get()
             print("Below is the text the user wrote on textbox 2 before clicking on the 'Browse Destinaton' button: \n'{}'\n".format(test))
 
@@ -155,18 +174,46 @@ class TheMainWindow(Frame):
             dirVariable = filedialog.askdirectory()
 
             self.txtBox2.insert(0, dirVariable)
-            # This there are no selections, ask the  user to select a directory to proceed.
+            # If there are no selections, ask the  user to select a directory to proceed.
             if (self.txtBox2.get() == '') or (self.txtBox1.get() == None):
                 self.lblMsg2.config(
                     bg='lightblue', text='Please select a destination directory to proceed...')
-            else:
+            elif (self.txtBox1.get() == self.txtBox2.get()):
                 self.lblMsg2.config(
-                    bg='lightgreen', text='We are ready to cut and paste .txt files found to the destination directory!')
+                    bg='lightblue', text='Your destination directory must be different from your source directory.. ')
+
+                self.txtBox2.delete(0, END)
+            else:
+
+                self.txtBox2.config(state=DISABLED)
+
+                self.lblMsg1.config(
+                    bg='lightgray', text='')
+
+                self.lblMsg2.config(
+                    bg='lightgreen', text="Press 'GO!' to cut and paste .txt files found to the destination directory!")
+
+                self.btnGo = Button(
+                    self.master, text='GO!', width=8, height=2, command=self.go)
+                self.btnGo.grid(row=4, column=1, sticky=SW, padx=(36,0))
 
             fPath = self.txtBox2.get()
             print('This is the destination directory that was selected: \n{}\n'.format(fPath))
 
+    def go(self):
 
+        try:
+            abFilePaths = txtFilesAbsolutePathList
+            destination = self.txtBox2.get()
+
+            for file in abFilePaths:
+                shutil.move(file, destination)
+            print("Success!!!")
+        except:
+            print("ERROR: Please browse a valid source and/or destination")
+
+
+                     
     def close(self):
         self.master.destroy()
 
