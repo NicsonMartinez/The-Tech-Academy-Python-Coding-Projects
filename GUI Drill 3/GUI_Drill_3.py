@@ -56,13 +56,7 @@ class TheMainWindow(Frame):
 
 # -------------------------------------GUI Row 3-------------------------------------------
 
-        self.btnBrowse2 = Button(
-            self.master, text='Browse Destination...', width=16, height=2, command=self.browseDestination)
-        self.btnBrowse2.grid(row=3, column=0, padx=(20, 0), pady=(0, 0))
-
-        self.txtBox2 = Entry(self.master, font=(
-            'Arial', 10), fg='black', width=58)
-        self.txtBox2.grid(row=3, column=1, padx=(30, 0), pady=(0, 0))
+        
 
 # -------------------------------------GUI Row 4-------------------------------------------
 
@@ -138,19 +132,52 @@ class TheMainWindow(Frame):
                 conn.commit()
             conn.close()
 
-            if txtFilesAbsolutePathList.__len__() == 0:
-
-                self.lblMsg1.config(
-                    bg='lightblue', text="There are {} .txt files found in the directory you have selected.".format(count))
-                self.lblMsg2.config(
-                    bg='lightblue', text="Please click on the 'Browse Directory...' button to select another path.")
-                
-            else:
-
+            # This if statement checks if txt files are found, then allow the user to browse a destionation, otherwise don't.
+            # It essentially hides or unhides grid widgets following a criteria.
+            if count == 0:
+                try:
+                    self.btnBrowse2.grid_remove()
+                    self.txtBox2.grid_remove()
+                    self.lblMsg1.config(
+                        bg='lightblue', text="There are {} .txt files found in the directory you have selected.".format(count))
+                    self.lblMsg2.config(
+                        bg='lightblue', text="Please click on the 'Browse Directory...' button to select another path.")
+                except:
+                    self.lblMsg1.config(
+                        bg='lightblue', text="There are {} .txt files found in the directory you have selected.".format(count))
+                    self.lblMsg2.config(
+                        bg='lightblue', text="Please click on the 'Browse Directory...' button to select another path.")
+                    print('\nThere are no button or textbox to remove yet.')
+            elif count > 0:
                 self.lblMsg1.config(
                     bg='lightgreen', text="{} .txt file(s) have been found in the directory you have selected.".format(count))
                 self.lblMsg2.config(
                     bg='lightgreen', text="Press the 'Browse Destination...' to proceed.")
+
+                self.btnBrowse2 = Button(
+                    self.master, text='Browse Destination...', width=16, height=2, command=self.browseDestination)
+                self.btnBrowse2.grid(row=3, column=0, padx=(20, 0), pady=(0, 0))
+
+                self.txtBox2 = Entry(self.master, font=(
+                    'Arial', 10), fg='black', width=58)
+                self.txtBox2.grid(row=3, column=1, padx=(30, 0), pady=(0, 0))
+
+
+
+
+            #if (txtFilesAbsolutePathList.__len__() == 0) or (txtFilesAbsolutePathList.__len__() == None):
+
+            #    self.lblMsg1.config(
+            #        bg='lightblue', text="There are {} .txt files found in the directory you have selected.".format(count))
+            #    self.lblMsg2.config(
+            #        bg='lightblue', text="Please click on the 'Browse Directory...' button to select another path.")
+                
+            #elif txtFilesAbsolutePathList.__len__() > 0:
+
+            #    self.lblMsg1.config(
+            #        bg='lightgreen', text="{} .txt file(s) have been found in the directory you have selected.".format(count))
+            #    self.lblMsg2.config(
+            #        bg='lightgreen', text="Press the 'Browse Destination...' to proceed.")
 
 
         
