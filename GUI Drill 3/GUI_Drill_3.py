@@ -18,6 +18,7 @@ from datetime import datetime
 
 
 txtFilesAbsolutePathList = []
+globalCount = []
 class TheMainWindow(Frame):
     def __init__(self, master):
         Frame.__init__(self)
@@ -56,7 +57,7 @@ class TheMainWindow(Frame):
 
 # -------------------------------------GUI Row 3-------------------------------------------
 
-        
+        # This row will be added or removed dynamically in the browseSource(self) and reset(self) functions.
 
 # -------------------------------------GUI Row 4-------------------------------------------
 
@@ -82,7 +83,7 @@ class TheMainWindow(Frame):
         dirVariable = filedialog.askdirectory()
 
         self.txtBox1.insert(0, dirVariable)
-        # This there are no selections, ask the  user to select a directory to proceed.
+        # This ensures that the user selects a directory source before proceeding. 
         if (self.txtBox1.get() == '') or (self.txtBox1.get() == None):
             self.lblMsg1.config(
                 bg='lightblue', text='Please select a source directory to proceed...')
@@ -119,12 +120,13 @@ class TheMainWindow(Frame):
                         # Concatinates the path directory with a txt file found through each iteration.
                         abPath = os.path.join(fPath, file)
                         txtFilesAbsolutePathList.append(abPath)
-
+                        
                         # Gets last modified time.
                         fModTime = os.path.getmtime(abPath)
                         formattedTime = datetime.fromtimestamp(fModTime).strftime(
                             '%m-%d-%Y %H:%M:%S')  # Formats the time in a way that humans can understand
                         count += 1  # Increments count by 1 through each iteration.
+                        globalCount.insert(0,count)
                         print(
                             "File {}. {} : Last-Modified Time {}".format(count, abPath, formattedTime))
                         cur.execute(
@@ -138,6 +140,8 @@ class TheMainWindow(Frame):
                 try:
                     self.btnBrowse2.grid_remove()
                     self.txtBox2.grid_remove()
+                    self.btnGo.grid_remove()
+                    self.btnReset.grid_remove()
                     self.lblMsg1.config(
                         bg='lightblue', text="There are {} .txt files found in the directory you have selected.".format(count))
                     self.lblMsg2.config(
@@ -147,7 +151,7 @@ class TheMainWindow(Frame):
                         bg='lightblue', text="There are {} .txt files found in the directory you have selected.".format(count))
                     self.lblMsg2.config(
                         bg='lightblue', text="Please click on the 'Browse Directory...' button to select another path.")
-                    print('\nThere are no button or textbox to remove yet.')
+                    print('\nNOTE: There are no button(s) or textbox to remove yet.')
             elif count > 0:
                 self.lblMsg1.config(
                     bg='lightgreen', text="{} .txt file(s) have been found in the directory you have selected.".format(count))
@@ -161,27 +165,6 @@ class TheMainWindow(Frame):
                 self.txtBox2 = Entry(self.master, font=(
                     'Arial', 10), fg='black', width=58)
                 self.txtBox2.grid(row=3, column=1, padx=(30, 0), pady=(0, 0))
-
-
-
-
-            #if (txtFilesAbsolutePathList.__len__() == 0) or (txtFilesAbsolutePathList.__len__() == None):
-
-            #    self.lblMsg1.config(
-            #        bg='lightblue', text="There are {} .txt files found in the directory you have selected.".format(count))
-            #    self.lblMsg2.config(
-            #        bg='lightblue', text="Please click on the 'Browse Directory...' button to select another path.")
-                
-            #elif txtFilesAbsolutePathList.__len__() > 0:
-
-            #    self.lblMsg1.config(
-            #        bg='lightgreen', text="{} .txt file(s) have been found in the directory you have selected.".format(count))
-            #    self.lblMsg2.config(
-            #        bg='lightgreen', text="Press the 'Browse Destination...' to proceed.")
-
-
-        
-
 
 
     def browseDestination(self):
@@ -227,21 +210,62 @@ class TheMainWindow(Frame):
             print('This is the destination directory that was selected: \n{}\n'.format(fPath))
 
     def go(self):
-
+        print("The 'GO!' button was pressed.\n")
         try:
             abFilePaths = txtFilesAbsolutePathList
             destination = self.txtBox2.get()
 
             for file in abFilePaths:
                 shutil.move(file, destination)
+
+            self.lblMsg1.config(
+                bg='lightgreen', text="Your {} .txt file(s) found have been moved to your selected directory!".format(globalCount[0]))
+
+            self.lblMsg2.config(
+                bg='lightgreen', text="SUCCESS!!")
+            
             print("Success!!!")
+
+            self.btnReset = Button(
+                self.master, text='Reset', width=16, height=2, command=self.reset)
+            self.btnReset.grid(row=4, column=1, padx=(72,0))
+
+            self.btnGo.config(state=DISABLED) # Disables the button to decrease likelyhood of the program malfunctioning
+
         except:
-            print("ERROR: Please browse a valid source and/or destination")
 
+            self.lblMsg1.config(
+                bg='lightblue', text="ERROR: Please browse a valid source and/or destination.".format(globalCount[0]))
 
-                     
+            self.lblMsg2.config(
+                bg='lightblue', text="Try pressing the 'Reset' button to restart the process.")
+
+            print("ERROR: Please browse a valid source and/or destination.")
+
+            self.btnReset = Button(
+                self.master, text='Reset', width=16, height=2, command=self.reset)
+            self.btnReset.grid(row=4, column=1, padx=(72,0))
+
+            self.btnGo.config(state=DISABLED)
+
     def close(self):
         self.master.destroy()
+
+    def reset(self):
+        print("\n\nThe 'Reset' button was pressed.")
+
+        self.txtBox1.delete(0, END)
+        self.btnBrowse2.grid_remove()
+        self.txtBox2.grid_remove()
+        self.lblMsg1.config(
+            bg='lightgray', text="")
+        self.lblMsg2.config(
+            bg='lightgray', text="")
+        self.btnGo.grid_remove()
+        self.btnReset.grid_remove()
+        txtFilesAbsolutePathList.clear()
+        globalCount.clear()
+
 
 if __name__ == "__main__":
     root = Tk()
