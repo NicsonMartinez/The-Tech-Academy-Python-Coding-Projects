@@ -148,8 +148,9 @@ class TheMainWindow(Frame):
             conn.commit()
         conn.close()
 
-        if not txtFilesAbsolutePathList:
-            
+        #if not txtFilesAbsolutePathList:
+        
+
 
 
     def browseDestination(self):
