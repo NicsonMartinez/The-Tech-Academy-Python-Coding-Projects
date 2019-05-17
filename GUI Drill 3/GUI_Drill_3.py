@@ -7,7 +7,7 @@
 # Nicson Martinez
 # 5/15/19
 
-import sys
+
 import os
 import sqlite3
 import shutil
@@ -145,7 +145,7 @@ class TheMainWindow(Frame):
                 self.lblMsg2.config(
                     bg='lightblue', text="Please click on the 'Browse Directory...' button to select another path.")
                 
-            else:
+            elif txtFilesAbsolutePathList.__len__() > 0:
 
                 self.lblMsg1.config(
                     bg='lightgreen', text="{} .txt file(s) have been found in the directory you have selected.".format(count))
