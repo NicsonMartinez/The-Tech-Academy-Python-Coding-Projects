@@ -39,7 +39,7 @@ and paste them within the destination directory.
 
 ------------------------------------------------------------------------------------------------------
 
-Txt files will be cut from the 'test-directory' folder and will get pasted in the 'test-directory-2'
+Please use  the 'test-directory' folder (which has two .txt files) and paste in the 'test-directory-2'
 folder inside of the current project folder directory. 
 
 Nicson Martinez
