@@ -74,9 +74,6 @@ class TheMainWindow(Frame):
 
   
     def browseSource(self):
-
-        self.txtBox1.config(state=NORMAL)
-
         # This is done in case the user decided to type something in the textbox before
         # pressing the [Browse Source...] button.
         test = self.txtBox1.get()
@@ -99,64 +96,68 @@ class TheMainWindow(Frame):
                 bg='lightgray', text='')
         else:
 
-            self.txtBox1.config(state=DISABLED)
+            fPath = self.txtBox1.get()
+            print('This is the source directory that was selected: \n{}\n'.format(fPath))
 
-            self.lblMsg1.config(
-                bg='lightgreen', text='We are now locating the .txt files in the directory selected!')
-            self.lblMsg2.config(
-                bg='lightgray', text='')
+            conn = sqlite3.connect('myDatabase1.db')
+            with conn:
+                cur = conn.cursor()
+                cur.execute("CREATE TABLE IF NOT EXISTS tbl_myTxtFiles(\
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT, \
+                    col_qualifyingFile TEXT,\
+                    col_timeStamp TEXT\
+                    )")
+                conn.commit()
+            conn.close()
 
-        fPath = self.txtBox1.get()
-        print('This is the source directory that was selected: \n{}\n'.format(fPath))
+            # Creates list of files in a specific directory.
+            directoryList = os.listdir(fPath)
+            print("All files in directory, {} are listed below: \n{}\n".format(
+                fPath, directoryList))
 
-        conn = sqlite3.connect('myDatabase1.db')
-        with conn:
-            cur = conn.cursor()
-            cur.execute("CREATE TABLE IF NOT EXISTS tbl_myTxtFiles(\
-                ID INTEGER PRIMARY KEY AUTOINCREMENT, \
-                col_qualifyingFile TEXT,\
-                col_timeStamp TEXT\
-                )")
-            conn.commit()
-        conn.close()
+            conn = sqlite3.connect('myDatabase1.db')
+            with conn:
+                cur = conn.cursor()
+                count = 0
+                print("The text files detected are: ")
+                for file in directoryList:
+                    if file.endswith('.txt'):
+                        # Concatinates the path directory with a txt file found through each iteration.
+                        abPath = os.path.join(fPath, file)
+                        txtFilesAbsolutePathList.append(abPath)
 
-        # Creates list of files in a specific directory.
-        directoryList = os.listdir(fPath)
-        print("All files in directory, {} are listed below: \n{}\n".format(
-            fPath, directoryList))
+                        # Gets last modified time.
+                        fModTime = os.path.getmtime(abPath)
+                        formattedTime = datetime.fromtimestamp(fModTime).strftime(
+                            '%m-%d-%Y %H:%M:%S')  # Formats the time in a way that humans can understand
+                        count += 1  # Increments count by 1 through each iteration.
+                        print(
+                            "File {}. {} : Last-Modified Time {}".format(count, abPath, formattedTime))
+                        cur.execute(
+                            "INSERT INTO tbl_myTxtFiles(col_qualifyingFile,col_timeStamp) VALUES (?,?)", (file, formattedTime))
+                conn.commit()
+            conn.close()
 
-        conn = sqlite3.connect('myDatabase1.db')
-        with conn:
-            cur = conn.cursor()
-            count = 0
-            print("The text files detected are: ")
-            for file in directoryList:
-                if file.endswith('.txt'):
-                    # Concatinates the path directory with a txt file found through each iteration.
-                    abPath = os.path.join(fPath, file)
-                    txtFilesAbsolutePathList.append(abPath)
+            if txtFilesAbsolutePathList.__len__() == 0:
 
-                    # Gets last modified time.
-                    fModTime = os.path.getmtime(abPath)
-                    formattedTime = datetime.fromtimestamp(fModTime).strftime(
-                        '%m-%d-%Y %H:%M:%S')  # Formats the time in a way that humans can understand
-                    count += 1  # Increments count by 1 through each iteration.
-                    print(
-                        "File {}. {} : Last-Modified Time {}".format(count, abPath, formattedTime))
-                    cur.execute(
-                        "INSERT INTO tbl_myTxtFiles(col_qualifyingFile,col_timeStamp) VALUES (?,?)", (file, formattedTime))
-            conn.commit()
-        conn.close()
+                self.lblMsg1.config(
+                    bg='lightblue', text="There are {} .txt files found in the directory you have selected.".format(count))
+                self.lblMsg2.config(
+                    bg='lightblue', text="Please click on the 'Browse Directory...' button to select another path.")
+                
+            else:
 
-        #if not txtFilesAbsolutePathList:
+                self.lblMsg1.config(
+                    bg='lightgreen', text="{} .txt file(s) have been found in the directory you have selected.".format(count))
+                self.lblMsg2.config(
+                    bg='lightgreen', text="Press the 'Browse Destination...' to proceed.")
+
+
         
 
 
 
     def browseDestination(self):
-
-        self.txtBox2.config(state=NORMAL)
-
         if (self.txtBox1.get() == '') or (self.txtBox1.get() == None):
             self.lblMsg1.config(
                 bg='lightblue', text="You must first click the 'Browse Source' button to select the source...")
@@ -185,9 +186,6 @@ class TheMainWindow(Frame):
 
                 self.txtBox2.delete(0, END)
             else:
-
-                self.txtBox2.config(state=DISABLED)
-
                 self.lblMsg1.config(
                     bg='lightgray', text='')
 
