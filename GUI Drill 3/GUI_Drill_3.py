@@ -216,8 +216,10 @@ class TheMainWindow(Frame):
             abFilePaths = txtFilesAbsolutePathList
             destination = self.txtBox2.get()
 
+            # shutil.move(src,dst) recursively move a file or directory (src) to another location (dst) and return the destination.
             for file in abFilePaths:
-                shutil.move(file, destination)
+                shutil.move(file, destination) 
+
 
             self.lblMsg1.config(
                 bg='lightgreen', text="Your {} .txt file(s) found have been moved to your selected directory!".format(globalCount[0]))
