@@ -9,20 +9,13 @@
 	</head>
     <body>
         <div class="page_container">
-            <ul class="topnav">
-                <li><a href="#">Royal Hotels</a></li>
-                <li><a href="#">See our Menu</a></li>
-                <li><a href="#">Admin Panel</a></li>
-            </ul>
+            {% include "navbar.html" %}
             <header class="header-title">
                 <h1>{% block header %}{% endblock %}</h1>
 		    </header>
             {% block content %}{% endblock %}
         </div>
+        {% include "footer.html" %}
 
-        <section id="block-footer">
-            <p id="footer-right"><a href="#">Terms</a>|<a href="#">Privacy</a></p>
-            <p id="footer-left">&copy;2018 - The Fictional, Royal Hotels</p>
-        </section>
     </body>
 </html>
