@@ -25,8 +25,8 @@
         <div class="frmBtn_container">
             <input type="submit">
             <div class="frmBtn_container">
-                <a href="../{{ form.pk }}delete/"><button class="btn">DELETE</button></a>
-                <a href="{% url 'admin_console' %}"><button class="btn">CANCEL</button></a>
+                <a class="btn" href="../{{ form.pk }}delete/">DELETE</a>
+                <a class="btn" href="{% url 'admin_console' %}">CANCEL</a>
             </div>
         </div>
     </form>
