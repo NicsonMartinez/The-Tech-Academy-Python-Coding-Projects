@@ -18,13 +18,29 @@ def details (request, pk):
         else:
             print(form.errors)
     else:
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
         return render(request, 'products/present_product.html', {'form': form})
 
 def delete(request, pk):
+    print("delete function called")
     pk = int(pk)
     item = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
         item.delete()
+        print('item.delete happened')
         return redirect('admin_console')
     context = {"item": item}
-    return render(request,"products/confirmDelete.html", context)
+    return render(request, "products/confirmDelete.html", context)
+
+# def confirmed(request):
+#     print("confirmed function called")
+#     if request.method == 'POST':
+#         # creates form instance and binds data to it
+#         form = ProductForm(request.POST or None)
+#         if form.is_valid():
+#             print('form.delete happened')
+#             form.delete()
+#             return redirect('admin_console')
+#     else:
+#         print('the else happened')
+#         return redirect('admin_console')
